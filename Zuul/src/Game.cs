@@ -81,7 +81,7 @@ class Game
 	private void PrintWelcome()
 	{
 		Console.WriteLine();
-		Console.WriteLine("Wake up");
+		Console.WriteLine("Wake up Stupid");
 		Console.WriteLine("Where are you");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
