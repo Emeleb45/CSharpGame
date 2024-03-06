@@ -123,6 +123,9 @@ class Game
 			case "quit":
 				wantToQuit = true;
 				break;
+			case "die":
+				KillPlayer();
+				break;
 
 		}
 
@@ -218,5 +221,8 @@ class Game
 		}
 		string TakingItem = command.SecondWord;
 		player.DropToChest(TakingItem);
+	}
+	public void KillPlayer() {
+		player.health = 0;
 	}
 }
