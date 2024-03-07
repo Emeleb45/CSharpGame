@@ -20,6 +20,9 @@ class Game
 		// ITEMS
 		Item sword = new Item(15, "An old heavy sword rusted and cracked.");
 
+		// ENEMIES
+		Enemy Bob = new Enemy(100, "Bob", "Boss");
+
 
 		// Create the rooms
 		Location beach = new Location("on the beach you woke up on");
@@ -31,7 +34,6 @@ class Game
 
 		wreck.AddExit("west", beach);
 		wreck.AddExit("up", wreckdeck);
-
 		wreckdeck.AddExit("down", wreck);
 
 
@@ -126,6 +128,9 @@ class Game
 			case "die":
 				KillPlayer();
 				break;
+			case "use":
+				UseItem(command);
+				break;
 
 		}
 
@@ -164,7 +169,11 @@ class Game
 		}
 
 		player.CurrentLocation = nextRoom;
-		player.Damage(1);
+		if (player.bleeding == true)
+		{
+			player.Damage(5);
+		}
+
 		Console.WriteLine(player.CurrentLocation.GetLongDescription());
 	}
 	private void Look()
@@ -216,13 +225,33 @@ class Game
 		if (!command.HasSecondWord())
 		{
 
-			Console.WriteLine("Drop What");
+			Console.WriteLine("Drop What?");
 			return;
 		}
 		string TakingItem = command.SecondWord;
 		player.DropToChest(TakingItem);
 	}
-	public void KillPlayer() {
+	public void KillPlayer()
+	{
 		player.health = 0;
+	}
+	public void UseItem(Command command)
+	{
+		
+		if (!command.HasSecondWord())
+		{
+			Console.WriteLine("Use what how?");
+			return;
+		}
+		string UsingItem = command.SecondWord;
+		string InteractedPart = "";
+		if (command.HasThirdWord())
+		{
+		InteractedPart = command.ThirdWord;
+		} else {
+		InteractedPart = "player";
+		}
+
+		player.UseItem(UsingItem, InteractedPart);
 	}
 }

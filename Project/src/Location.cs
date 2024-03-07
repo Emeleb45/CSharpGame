@@ -22,6 +22,7 @@ class Location
 		chest = new Inventory(999999);
 		description = desc;
 		exits = new Dictionary<string, Location>();
+
 	}
 
 

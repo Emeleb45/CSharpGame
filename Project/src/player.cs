@@ -4,6 +4,8 @@ class Player
     public int health;
     private Inventory backpack;
 
+    public bool bleeding;
+
 
 
     // methods
@@ -35,6 +37,7 @@ class Player
     {
         backpack = new Inventory(75);
         health = 100;
+        bleeding = true;
         CurrentLocation = null;
     }
     public string ShowBackpack()
@@ -88,11 +91,26 @@ class Player
                 CurrentLocation.Chest.Put(itemName, item);
                 backpack.Get(itemName);
                 backpack.del(itemName);
-                Console.WriteLine("Dropped "+itemName);
+                Console.WriteLine("Dropped " + itemName);
             }
 
         }
 
+        return false;
+    }
+    public bool UseItem(string itemName, string InteractedPart)
+    {
+        Item item = backpack.Get(itemName);
+        if (item == null)
+        {
+            Console.WriteLine("You dont have that item.");
+            return false;
+        }
+
+
+
+        Console.WriteLine("Used Item but its not implemented yet so L.");
+        
         return false;
     }
 }
