@@ -23,18 +23,21 @@ class Inventory
     {
         return maxWeight - TotalWeight();
     }
-    public bool Put(string itemName, Item item)
+    public bool Put(string itemName, Item item, int count)
     {
 
-        if (item == null)
+        if (item == null || count <= 0)
         {
             return false;
         }
-        if (FreeWeight() + item.Weight < maxWeight)
+
+        if (FreeWeight() < item.Weight * count)
         {
             Console.WriteLine(itemName + " didt not fit.");
             return false;
         }
+
+
         items.Add(itemName, item);
 
 

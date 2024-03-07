@@ -1,7 +1,59 @@
-class Enemy{
+class Enemy
+{
+    public int health;
+    public int Armor;
+    public bool bleeding;
+    public string Name;
+    public string EniType;
+    private Inventory backpack;
+    public int Hit(int amount)
+    {
+        int damage = amount;
+        if (Armor > 0)
+        {
+            damage -= Armor;
 
-    
-    public Enemy(int health, string name, string type){
+            if (damage < 2)
+            {
+                damage = 2;
+            }
+            return damage;
+        }
+
+
+        return damage;
+    }
+    public void Damage(int amount)
+    {
+        health -= Hit(amount);
+        if (health < 0)
+        {
+            health = 0;
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        health += amount;
+        if (health > 100)
+        {
+            health = 100;
+        }
+    }
+
+    public bool IsAlive()
+    {
+        return health > 0;
+    }
+    public Enemy(int armor, string type)
+    {
+        Armor = armor;
+        Name = "";
+        EniType = type;
+        backpack = new Inventory(75);
+        health = 100;
+        bleeding = false;
+
 
     }
 

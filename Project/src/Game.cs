@@ -17,11 +17,11 @@ class Game
 
 	private void CreateLocations()
 	{
-		// ITEMS
-		Item sword = new Item(15, "An old heavy sword rusted and cracked.");
+		// ITEMS -- Weight, Function, Type, Description, Count
 
-		// ENEMIES
-		Enemy Bob = new Enemy(100, "Bob", "Boss");
+
+		// ENEMIES -- Armor, Type
+		Enemy Crab = new Enemy(0, "Crab");
 
 
 		// Create the rooms
@@ -37,10 +37,13 @@ class Game
 		wreckdeck.AddExit("down", wreck);
 
 
-		// Add your Items here
+		// Add your Items \/ Name        \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
+		wreck.Chest.Put("sword", new Item(15, "10", "weapon", "An old heavy sword rusted and cracked.", 1), 1); //<-- amnt for putcmd could be more only rly for healing and stuff 
+		wreck.Chest.Put("bandage", new Item(5, "10", "healingpotion", "A potion that restores 10 hp.", 1), 2);
 
-		wreckdeck.Chest.Put("sword", sword);
-
+		// Add Enemies       \/ Name         \/Armor \/ Type
+		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab"));
+		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab"));
 
 		// Start game Location
 		player.CurrentLocation = beach;
@@ -87,7 +90,8 @@ class Game
 		Console.WriteLine("Where are you");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
-		Console.WriteLine(player.CurrentLocation.GetLongDescription());
+		Look();
+		Status();
 	}
 
 
@@ -101,6 +105,7 @@ class Game
 			return wantToQuit;
 		}
 		Console.Clear();
+
 
 		switch (command.CommandWord)
 		{
@@ -152,6 +157,11 @@ class Game
 
 	private void GoLocation(Command command)
 	{
+		if (player.InCombat == true)
+		{
+			Console.WriteLine("You cant run.");
+			return;
+		}
 		if (!command.HasSecondWord())
 		{
 
@@ -161,33 +171,67 @@ class Game
 
 		string direction = command.SecondWord;
 
-		Location nextRoom = player.CurrentLocation.GetExit(direction);
-		if (nextRoom == null)
+		Location nextLocation = player.CurrentLocation.GetExit(direction);
+		if (nextLocation == null)
 		{
 			Console.WriteLine("There is no exit " + direction + "!");
 			return;
 		}
 
-		player.CurrentLocation = nextRoom;
+		player.CurrentLocation = nextLocation;
+
 		if (player.bleeding == true)
 		{
 			player.Damage(5);
 		}
+		if (nextLocation.enemies != null && nextLocation.enemies.Count > 0)
+		{
+			player.InCombat = true;
+			Console.WriteLine($"Oh no! You have encountered enemies.");
 
-		Console.WriteLine(player.CurrentLocation.GetLongDescription());
+			foreach (var enemyEntry in nextLocation.enemies)
+			{
+				string enemyName = enemyEntry.Key;
+				Enemy enemy = enemyEntry.Value;
+
+				Console.WriteLine($"{enemyName}, the {enemy.EniType}.");
+			}
+
+
+			return;
+		}
+
+		Look();
 	}
 	private void Look()
 	{
-		Console.WriteLine(player.CurrentLocation.GetLongDescription());
-		string line = player.CurrentLocation.Chest.getallitems();
-		if (line == null)
+		if (player.InCombat == true)
 		{
-			Console.WriteLine("Location is empty.");
+			Console.WriteLine($"Enemies:");
+
+			foreach (var enemyEntry in player.CurrentLocation.enemies)
+			{
+				string enemyName = enemyEntry.Key;
+				Enemy enemy = enemyEntry.Value;
+
+				Console.WriteLine($"{enemyName}, the {enemy.EniType}. || Health: {enemy.health}");
+			}
+
 		}
 		else
 		{
-			Console.WriteLine("This location holds: \n" + line);
+			Console.WriteLine(player.CurrentLocation.GetLongDescription());
+			string line = player.CurrentLocation.Chest.getallitems();
+			if (line == null)
+			{
+				Console.WriteLine("Location is empty.");
+			}
+			else
+			{
+				Console.WriteLine("This location holds: \n" + line);
+			}
 		}
+
 
 
 	}
@@ -203,12 +247,26 @@ class Game
 			Console.WriteLine("Your items: \n" + line);
 		}
 
+		if (player.bleeding)
+		{
+			Console.WriteLine("You are bleeding.");
+		}
+		else
+		{
+			Console.WriteLine("Not bleeding.");
+		}
 		Console.WriteLine("Health: " + player.health);
+
 
 
 	}
 	public void Take(Command command)
 	{
+		if (player.InCombat == true)
+		{
+			Console.WriteLine("Focus on the fight.");
+			return;
+		}
 		if (!command.HasSecondWord())
 		{
 
@@ -221,7 +279,11 @@ class Game
 	}
 	public void Drop(Command command)
 	{
-
+		if (player.InCombat == true)
+		{
+			Console.WriteLine("Focus on the fight.");
+			return;
+		}
 		if (!command.HasSecondWord())
 		{
 
@@ -237,7 +299,7 @@ class Game
 	}
 	public void UseItem(Command command)
 	{
-		
+
 		if (!command.HasSecondWord())
 		{
 			Console.WriteLine("Use what how?");
@@ -247,9 +309,11 @@ class Game
 		string InteractedPart = "";
 		if (command.HasThirdWord())
 		{
-		InteractedPart = command.ThirdWord;
-		} else {
-		InteractedPart = "player";
+			InteractedPart = command.ThirdWord;
+		}
+		else
+		{
+			InteractedPart = "player";
 		}
 
 		player.UseItem(UsingItem, InteractedPart);

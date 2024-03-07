@@ -4,7 +4,7 @@ class Location
 {
 
 	private string description;
-
+	internal Dictionary<string, Enemy> enemies;
 	private Inventory chest;
 	public Inventory Chest
 	{
@@ -13,8 +13,9 @@ class Location
 	public Location()
 	{
 		chest = new Inventory(999999);
+
 	}
-	private Dictionary<string, Location> exits;
+	internal Dictionary<string, Location> exits;
 
 
 	public Location(string desc)
@@ -22,9 +23,14 @@ class Location
 		chest = new Inventory(999999);
 		description = desc;
 		exits = new Dictionary<string, Location>();
+		enemies = new Dictionary<string, Enemy>();
 
 	}
-
+	public void AddEnemy(string enemyname, Enemy enemy)
+	{
+		enemy.Name = enemyname;
+		enemies.Add(enemyname, enemy);
+	}
 
 	public void AddExit(string direction, Location neighbor)
 	{

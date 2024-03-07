@@ -4,14 +4,33 @@ class Player
     public int health;
     private Inventory backpack;
 
+    public string Name;
+    public int Armor;
     public bool bleeding;
-
+    public bool InCombat;
 
 
     // methods
+    public int Hit(int amount)
+    {
+        int damage = amount;
+        if (Armor > 0)
+        {
+            damage -= Armor;
+
+            if (damage < 2)
+            {
+                damage = 2;
+            }
+            return damage;
+        }
+
+
+        return damage;
+    }
     public void Damage(int amount)
     {
-        health -= amount;
+        health -= Hit(amount);
         if (health < 0)
         {
             health = 0;
@@ -35,10 +54,13 @@ class Player
 
     public Player()
     {
+        Name = "Blank";
+        Armor = 0;
         backpack = new Inventory(75);
-        health = 100;
+        health = 75;
         bleeding = true;
         CurrentLocation = null;
+        InCombat = false;
     }
     public string ShowBackpack()
     {
@@ -71,7 +93,7 @@ class Player
             if (item != null)
             {
 
-                backpack.Put(itemName, item);
+                backpack.Put(itemName, item, 1);
                 CurrentLocation.Chest.del(itemName);
                 Console.WriteLine(itemName + " added to inventory");
             }
@@ -88,7 +110,7 @@ class Player
             Item item = backpack.Get(itemName);
             if (item != null)
             {
-                CurrentLocation.Chest.Put(itemName, item);
+                CurrentLocation.Chest.Put(itemName, item, 1);
                 backpack.Get(itemName);
                 backpack.del(itemName);
                 Console.WriteLine("Dropped " + itemName);
@@ -106,11 +128,37 @@ class Player
             Console.WriteLine("You dont have that item.");
             return false;
         }
+        switch (item.Type)
+        {
+            case "weapon":
+                if (CurrentLocation.enemies.ContainsKey(InteractedPart))
+                {
+                    Enemy enemy = CurrentLocation.enemies[InteractedPart];
+                    enemy.Damage(11);
+                    Console.WriteLine($"unfinished attacked {InteractedPart}");
+                }
+                else
+                {
+                    Console.WriteLine($"Cannot attack {InteractedPart}.");
+                }
+
+                break;
+
+            case "healingpotion":
+                Console.WriteLine("Unfinishied healuse");
+                break;
+
+            case "unlock":
+                Console.WriteLine("Unfinishied unlock");
+                break;
+
+            default:
+                Console.WriteLine("Invalid action type.");
+                break;
+        }
 
 
 
-        Console.WriteLine("Used Item but its not implemented yet so L.");
-        
         return false;
     }
 }
