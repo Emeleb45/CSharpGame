@@ -36,9 +36,17 @@ class Inventory
             Console.WriteLine(itemName + " didt not fit.");
             return false;
         }
+        if (items.ContainsKey(itemName))
+        {
+            items[itemName].Count += count;
+        }
+        else
+        {
+            items.Add(itemName, item);
+            item.Count = count;
+        }
 
 
-        items.Add(itemName, item);
 
 
         return true;
@@ -52,7 +60,7 @@ class Inventory
         }
         foreach (var itemEntry in items)
         {
-            result += $"{itemEntry.Key} [Weight: {itemEntry.Value.Weight}, || Description: {itemEntry.Value.Description}]\n";
+            result += $"{itemEntry.Key} [Weight: {itemEntry.Value.Weight}, || Description: {itemEntry.Value.Description}, || Count: {itemEntry.Value.Count}]\n";
         }
         return result;
     }
@@ -72,12 +80,20 @@ class Inventory
         }
 
     }
-    public Item del(string itemName)
+    public Item del(string itemName, int count)
     {
         if (items.ContainsKey(itemName))
         {
             Item removedItem = items[itemName];
-            items.Remove(itemName);
+            if (removedItem.Count > count)
+            {
+                removedItem.Count -= count;
+            }
+            else
+            {
+                items.Remove(itemName);
+            }
+
             return null;
         }
         else

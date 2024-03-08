@@ -94,7 +94,7 @@ class Player
             {
 
                 backpack.Put(itemName, item, 1);
-                CurrentLocation.Chest.del(itemName);
+                CurrentLocation.Chest.del(itemName, 1);
                 Console.WriteLine(itemName + " added to inventory");
             }
 
@@ -112,7 +112,7 @@ class Player
             {
                 CurrentLocation.Chest.Put(itemName, item, 1);
                 backpack.Get(itemName);
-                backpack.del(itemName);
+                backpack.del(itemName, 1);
                 Console.WriteLine("Dropped " + itemName);
             }
 
@@ -131,16 +131,40 @@ class Player
         switch (item.Type)
         {
             case "weapon":
-                if (CurrentLocation.enemies.ContainsKey(InteractedPart))
+                int DamageValue;
+                if (int.TryParse(item.Func, out DamageValue))
                 {
-                    Enemy enemy = CurrentLocation.enemies[InteractedPart];
-                    enemy.Damage(11);
-                    Console.WriteLine($"unfinished attacked {InteractedPart}");
+                    if (CurrentLocation.enemies.ContainsKey(InteractedPart))
+                    {
+
+                        Enemy enemy = CurrentLocation.enemies[InteractedPart];
+                        if (enemy.IsAlive())
+                        {
+                            EnemiesAttack();
+                            enemy.Damage(DamageValue);
+                            Console.WriteLine($"Attacked {InteractedPart}.");
+                            if (AreAllEnemiesDead())
+                            {
+                                InCombat = false;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{InteractedPart} is already dead.");
+                            if (AreAllEnemiesDead())
+                            {
+                                InCombat = false;
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Cannot attack {InteractedPart}.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine($"Cannot attack {InteractedPart}.");
-                }
+
 
                 break;
 
@@ -160,5 +184,31 @@ class Player
 
 
         return false;
+    }
+    private bool AreAllEnemiesDead()
+    {
+        foreach (var enemy in CurrentLocation.enemies.Values)
+        {
+            if (enemy.IsAlive())
+            {
+                // At least one enemy is alive, return false
+                return false;
+            }
+        }
+
+        // All enemies are dead
+        return true;
+    }
+    public void EnemiesAttack()
+    {
+        foreach (var enemy in CurrentLocation.enemies.Values)
+        {
+            if (enemy.IsAlive())
+            {
+                Damage(enemy.attack());
+
+
+            }
+        }
     }
 }

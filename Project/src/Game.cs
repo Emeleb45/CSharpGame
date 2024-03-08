@@ -38,12 +38,12 @@ class Game
 
 
 		// Add your Items \/ Name        \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
-		wreck.Chest.Put("sword", new Item(15, "10", "weapon", "An old heavy sword rusted and cracked.", 1), 1); //<-- amnt for putcmd could be more only rly for healing and stuff 
+		wreck.Chest.Put("sword", new Item(15, "25", "weapon", "An old heavy sword rusted and cracked.", 1), 1); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		wreck.Chest.Put("bandage", new Item(5, "10", "healingpotion", "A potion that restores 10 hp.", 1), 2);
 
 		// Add Enemies       \/ Name         \/Armor \/ Type
-		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab"));
-		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab"));
+		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab") { CurrentLocation = wreckdeck });
+		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab") { CurrentLocation = wreckdeck });
 
 		// Start game Location
 		player.CurrentLocation = beach;

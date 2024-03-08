@@ -6,6 +6,7 @@ class Enemy
     public string Name;
     public string EniType;
     private Inventory backpack;
+    public Location CurrentLocation { get; set; }
     public int Hit(int amount)
     {
         int damage = amount;
@@ -26,9 +27,10 @@ class Enemy
     public void Damage(int amount)
     {
         health -= Hit(amount);
-        if (health < 0)
+        if (health <= 0)
         {
             health = 0;
+            Die();
         }
     }
 
@@ -39,6 +41,11 @@ class Enemy
         {
             health = 100;
         }
+    }
+    public void Die()
+    {
+        Console.WriteLine($"{Name} died and dropped his items.");
+        DropItems();
     }
 
     public bool IsAlive()
@@ -53,8 +60,44 @@ class Enemy
         backpack = new Inventory(75);
         health = 100;
         bleeding = false;
+        if (type == "Crab")
+        {
+            backpack.Put("crabscale", new Item(5, "0", $"Item", "Scale of a crab.", 1), 2);
+        }
 
 
     }
+    public bool DropItems()
+    {
 
+        if (CurrentLocation != null && CurrentLocation.enemies.Count > 0)
+        {
+            foreach (var itemEntry in backpack.items.ToList())
+            {
+                string itemName = itemEntry.Key;
+                Item item = itemEntry.Value;
+
+
+
+
+
+                CurrentLocation.Chest.Put(itemName, item, 1);
+                backpack.del(itemName, 1);
+
+            }
+        }
+
+        return false;
+    }
+    public int attack()
+    {
+
+        if (EniType == "Crab")
+        {
+            Console.WriteLine("Crab attacked you");
+            return 5;
+
+        }
+        return 0;
+    }
 }
