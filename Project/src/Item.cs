@@ -7,15 +7,15 @@ class Item
     public string Type { get; }
 
     public string Description { get; }
-    public int Count { get; set; }
 
-    public Item(int weight, string func, string type, string description, int count)
+
+    public Item(int weight, string func, string type, string description)
     {
         Weight = weight;
         Func = func;
         Type = type;
         Description = description;
-        Count = count;
+
 
     }
 

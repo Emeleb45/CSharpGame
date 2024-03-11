@@ -27,7 +27,7 @@ class Command
 	{
 		return SecondWord != null;
 	}
-		public bool HasThirdWord()
+	public bool HasThirdWord()
 	{
 		return ThirdWord != null;
 	}

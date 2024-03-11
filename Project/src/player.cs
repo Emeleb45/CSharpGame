@@ -1,5 +1,7 @@
 class Player
 {
+    private Game game;
+
     public Location CurrentLocation { get; set; }
     public int health;
     private Inventory backpack;
@@ -52,7 +54,7 @@ class Player
     }
 
 
-    public Player()
+    public Player(Game game)
     {
         Name = "Blank";
         Armor = 0;
@@ -61,6 +63,7 @@ class Player
         bleeding = true;
         CurrentLocation = null;
         InCombat = false;
+        this.game = game;
     }
     public string ShowBackpack()
     {
@@ -93,8 +96,8 @@ class Player
             if (item != null)
             {
 
-                backpack.Put(itemName, item, 1);
-                CurrentLocation.Chest.del(itemName, 1);
+                backpack.Put(itemName, item);
+                CurrentLocation.Chest.del(itemName);
                 Console.WriteLine(itemName + " added to inventory");
             }
 
@@ -110,9 +113,9 @@ class Player
             Item item = backpack.Get(itemName);
             if (item != null)
             {
-                CurrentLocation.Chest.Put(itemName, item, 1);
+                CurrentLocation.Chest.Put(itemName, item);
                 backpack.Get(itemName);
-                backpack.del(itemName, 1);
+                backpack.del(itemName);
                 Console.WriteLine("Dropped " + itemName);
             }
 
@@ -140,8 +143,17 @@ class Player
                         Enemy enemy = CurrentLocation.enemies[InteractedPart];
                         if (enemy.IsAlive())
                         {
+                            Random random = new Random();
+                            double randomValue = random.NextDouble();
                             EnemiesAttack();
+                            if (randomValue <= 0.05)
+                            {
+                                bleeding = true;
+
+                                Console.WriteLine("You have started to bleed.");
+                            }
                             enemy.Damage(DamageValue);
+                            Thread audioThread = game.audioPlayer.PlayAudioAsync("assets/audio/PlayerAttack.mp3", true);
                             Console.WriteLine($"Attacked {InteractedPart}.");
                             if (AreAllEnemiesDead())
                             {
@@ -168,8 +180,22 @@ class Player
 
                 break;
 
-            case "healingpotion":
-                Console.WriteLine("Unfinishied healuse");
+            case "healingitem":
+                int HealValue;
+                if (int.TryParse(item.Func, out HealValue))
+                    if (InteractedPart != "player")
+                    {
+                        Console.WriteLine("You can only heal yourself.");
+                        break;
+                    }
+                    else
+                    {
+                        Heal(HealValue);
+                        bleeding = false;
+                        backpack.del(itemName);
+                        Console.WriteLine($"Healed {HealValue}Hp.");
+                    }
+
                 break;
 
             case "unlock":

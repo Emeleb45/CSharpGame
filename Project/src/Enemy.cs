@@ -62,7 +62,7 @@ class Enemy
         bleeding = false;
         if (type == "Crab")
         {
-            backpack.Put("crabscale", new Item(5, "0", $"Item", "Scale of a crab.", 1), 2);
+            backpack.Put("crabscale", new Item(5, "0", $"Item", "Scale of a crab."));
         }
 
 
@@ -81,8 +81,8 @@ class Enemy
 
 
 
-                CurrentLocation.Chest.Put(itemName, item, 1);
-                backpack.del(itemName, 1);
+                CurrentLocation.Chest.Put(itemName, item);
+                backpack.del(itemName);
 
             }
         }
@@ -96,7 +96,6 @@ class Enemy
         {
             Console.WriteLine("Crab attacked you");
             return 5;
-
         }
         return 0;
     }

@@ -23,33 +23,41 @@ class Inventory
     {
         return maxWeight - TotalWeight();
     }
-    public bool Put(string itemName, Item item, int count)
+    public bool Put(string itemName, Item item)
     {
 
-        if (item == null || count <= 0)
+        if (item == null)
         {
             return false;
         }
 
-        if (FreeWeight() < item.Weight * count)
+        if (FreeWeight() < item.Weight)
         {
             Console.WriteLine(itemName + " didt not fit.");
             return false;
         }
-        if (items.ContainsKey(itemName))
+        while (items.ContainsKey(itemName))
         {
-            items[itemName].Count += count;
+
+            if (itemName.EndsWith("2") && int.TryParse(itemName.Substring(itemName.Length - 1), out int suffix))
+            {
+                itemName = itemName.Substring(0, itemName.Length - 1) + (suffix + 1);
+            }
+            else
+            {
+
+                itemName += "2";
+            }
         }
-        else
-        {
-            items.Add(itemName, item);
-            item.Count = count;
-        }
 
-
-
+        items.Add(itemName, item);
 
         return true;
+
+
+
+
+
     }
     public string getallitems()
     {
@@ -60,7 +68,7 @@ class Inventory
         }
         foreach (var itemEntry in items)
         {
-            result += $"{itemEntry.Key} [Weight: {itemEntry.Value.Weight}, || Description: {itemEntry.Value.Description}, || Count: {itemEntry.Value.Count}]\n";
+            result += $"{itemEntry.Key} [Weight: {itemEntry.Value.Weight}, || Description: {itemEntry.Value.Description}]\n";
         }
         return result;
     }
@@ -80,19 +88,15 @@ class Inventory
         }
 
     }
-    public Item del(string itemName, int count)
+    public Item del(string itemName)
     {
         if (items.ContainsKey(itemName))
         {
             Item removedItem = items[itemName];
-            if (removedItem.Count > count)
-            {
-                removedItem.Count -= count;
-            }
-            else
-            {
-                items.Remove(itemName);
-            }
+
+
+            items.Remove(itemName);
+
 
             return null;
         }

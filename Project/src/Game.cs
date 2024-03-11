@@ -2,15 +2,16 @@ using System;
 
 class Game
 {
+	public AudioPlayer audioPlayer = new AudioPlayer();
 	private Parser parser;
 	private Player player;
-
-
+	public bool quitRequested = false;
+	private Thread BackAudio;
 
 	public Game()
 	{
 		parser = new Parser();
-		player = new Player();
+		player = new Player(this);
 		CreateLocations();
 	}
 
@@ -38,12 +39,15 @@ class Game
 
 
 		// Add your Items \/ Name        \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
-		wreck.Chest.Put("sword", new Item(15, "25", "weapon", "An old heavy sword rusted and cracked.", 1), 1); //<-- amnt for putcmd could be more only rly for healing and stuff 
-		wreck.Chest.Put("bandage", new Item(5, "10", "healingpotion", "A potion that restores 10 hp.", 1), 2);
+		wreck.Chest.Put("sword", new Item(15, "25", "weapon", "An old heavy sword rusted and cracked.")); //<-- amnt for putcmd could be more only rly for healing and stuff 
+		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
+		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
+		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
+
 
 		// Add Enemies       \/ Name         \/Armor \/ Type
-		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab") { CurrentLocation = wreckdeck });
-		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab") { CurrentLocation = wreckdeck });
+		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab"));
+		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab"));
 
 		// Start game Location
 		player.CurrentLocation = beach;
@@ -52,35 +56,43 @@ class Game
 	public void Play()
 	{
 		PrintWelcome();
-
-
-		bool finished = false;
-		while (!finished)
+		Thread audioThread = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+		Thread gameThread = new Thread(() =>
 		{
-			if (player.health > 0)
+			bool finished = false;
+			while (!finished)
 			{
-				Command command = parser.GetCommand();
-				finished = ProcessCommand(command);
-			}
-			else
-			{
-				finished = true;
+				if (player.health > 0)
+				{
+					Command command = parser.GetCommand();
+					finished = ProcessCommand(command);
+				}
+				else
+				{
+					finished = true;
+				}
 			}
 
-		}
+			quitRequested = true;
+			audioPlayer.StopAudioThread(audioThread);
+			audioPlayer.WaitForAllAudioThreads();
+		});
+		gameThread.Start();
+		gameThread.Join();
 		if (player.health > 0)
 		{
 			Console.WriteLine("Thank you for playing.");
 			Console.WriteLine("Press [Enter] to continue.");
-			Console.ReadLine();
+
 		}
 		else
 		{
 			Console.WriteLine("You died");
 			Console.WriteLine("Press [Enter] to quit.");
-			Console.ReadLine();
-		}
 
+		}
+		Console.ReadLine();
+		Environment.Exit(0);
 	}
 
 	private void PrintWelcome()
@@ -177,7 +189,6 @@ class Game
 			Console.WriteLine("There is no exit " + direction + "!");
 			return;
 		}
-
 		player.CurrentLocation = nextLocation;
 
 		if (player.bleeding == true)
