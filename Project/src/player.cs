@@ -153,14 +153,16 @@ class Player
                                 Console.WriteLine("You have started to bleed.");
                             }
                             enemy.Damage(DamageValue);
-                            Thread AttackSound = game.audioPlayer.PlayAudioAsync("assets/audio/PlayerAttack.mp3", false);
+                            Thread AttackSound = game.audioPlayer.PlayAudioAsync("assets/audio/PlayerAttack.wav", false);
                             Console.WriteLine($"Attacked {InteractedPart}.");
                             if (AreAllEnemiesDead())
                             {
+                                Console.ForegroundColor = ConsoleColor.Green;
                                 InCombat = false;
                                 game.audioPlayer.StopAllAudioThreads();
-                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
                                 CurrentLocation.enemies.Clear();
+
                             }
                         }
                         else
@@ -168,9 +170,11 @@ class Player
                             Console.WriteLine($"{InteractedPart} is already dead.");
                             if (AreAllEnemiesDead())
                             {
+                                Console.ForegroundColor = ConsoleColor.Green;
                                 game.audioPlayer.StopAllAudioThreads();
-                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
                                 CurrentLocation.enemies.Clear();
+
                                 InCombat = false;
                             }
 
@@ -179,7 +183,7 @@ class Player
                         }
                     }
                     else
-                    {           
+                    {
                         Console.WriteLine($"Cannot attack {InteractedPart}.");
                     }
                 }

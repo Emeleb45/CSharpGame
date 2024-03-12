@@ -6,7 +6,6 @@ class Game
 	private Parser parser;
 	private Player player;
 	public bool quitRequested = false;
-	private Thread BackAudio;
 
 	public Game()
 	{
@@ -55,8 +54,9 @@ class Game
 
 	public void Play()
 	{
+		Console.ForegroundColor = ConsoleColor.Green;
 		PrintWelcome();
-		Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+		Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
 		Thread gameThread = new Thread(() =>
 		{
 			bool finished = false;
@@ -87,6 +87,7 @@ class Game
 		}
 		else
 		{
+			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine("You died");
 			Console.WriteLine("Press [Enter] to quit.");
 
@@ -198,8 +199,9 @@ class Game
 		if (nextLocation.enemies != null && nextLocation.enemies.Count > 0)
 		{
 			audioPlayer.StopAllAudioThreads();
-			Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BattleMain.mp3", true);
+			Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BattleMain.wav", true);
 			player.InCombat = true;
+			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine($"Oh no! You have encountered enemies.");
 
 			foreach (var enemyEntry in nextLocation.enemies)
@@ -207,7 +209,7 @@ class Game
 				string enemyName = enemyEntry.Key;
 				Enemy enemy = enemyEntry.Value;
 
-				Console.WriteLine($"{enemyName}, the {enemy.EniType}.");  	
+				Console.WriteLine($"{enemyName}, the {enemy.EniType}.");
 			}
 
 

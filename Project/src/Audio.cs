@@ -45,32 +45,30 @@ public class AudioPlayer
             thread.Join();
         }
     }
-
     private void PlayAudio(string audioFile, bool loop)
     {
         try
         {
-            while (!quitRequested)
+            using (var audioFileReader = new AudioFileReader(audioFile))
+            using (var outputDevice = new WaveOutEvent())
             {
-                using (var audioFileReader = new AudioFileReader(audioFile))
-                using (var outputDevice = new WaveOutEvent())
+                audioThreads[Thread.CurrentThread] = outputDevice;
+
+                outputDevice.Init(audioFileReader);
+                outputDevice.Play();
+
+                // Wait for the playback to complete or until quit is requested
+                while (!quitRequested && outputDevice.PlaybackState == PlaybackState.Playing)
                 {
-                    audioThreads[Thread.CurrentThread] = outputDevice;
-
-                    outputDevice.Init(audioFileReader);
-
-                    outputDevice.Play();
-
-                    while (!quitRequested && (loop || outputDevice.PlaybackState == PlaybackState.Playing))
-                    {
-                        Thread.Sleep(100);
-                    }
+                    Thread.Sleep(100);
                 }
 
-                // If not looping or quit requested, exit the loop
-                if (!loop || quitRequested)
+                // If looping or not quit requested, restart the audio playback
+                if (loop && !quitRequested)
                 {
-                    break;
+                    // Stop and dispose before restarting
+                    outputDevice.Stop();
+                    outputDevice.Dispose();
                 }
             }
         }
