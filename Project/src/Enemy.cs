@@ -61,9 +61,9 @@ class Enemy
         backpack = new Inventory(75);
         health = 100;
         bleeding = false;
-        if (type == "Crab")
+        if (type == "Snake")
         {
-            backpack.Put("crabscale", new Item(5, "0", $"Item", "Scale of a crab."));
+            backpack.Put("snakescale", new Item(5, "0", "Item", "Scale of a snake why would u want this."));
         }
 
 
@@ -86,16 +86,16 @@ class Enemy
                 backpack.del(itemName);
 
             }
+        return true;
         }
 
         return false;
     }
     public int attack()
     {
-
-        if (EniType == "Crab")
+        Console.WriteLine($"{Name} attacked you.");
+        if (EniType == "Snake")
         {
-            Console.WriteLine("Crab attacked you");
             return 5;
         }
         return 0;

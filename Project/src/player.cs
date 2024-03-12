@@ -157,7 +157,7 @@ class Player
                             Console.WriteLine($"Attacked {InteractedPart}.");
                             if (AreAllEnemiesDead())
                             {
-                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.ForegroundColor = ConsoleColor.DarkYellow;
                                 InCombat = false;
                                 game.audioPlayer.StopAllAudioThreads();
                                 Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
@@ -170,7 +170,7 @@ class Player
                             Console.WriteLine($"{InteractedPart} is already dead.");
                             if (AreAllEnemiesDead())
                             {
-                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.ForegroundColor = ConsoleColor.DarkYellow;
                                 game.audioPlayer.StopAllAudioThreads();
                                 Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
                                 CurrentLocation.enemies.Clear();

@@ -20,41 +20,40 @@ class Game
 		// ITEMS -- Weight, Function, Type, Description, Count
 
 
-		// ENEMIES -- Armor, Type
-		Enemy Crab = new Enemy(0, "Crab");
 
-
+		// Add your Items     \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
+		Item Sword = new Item(15, "50", "weapon", "A rusted egyptian sword."); //<-- amnt for putcmd could be more only rly for healing and stuff 
+		Item Bandage = new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp.");
 		// Create the rooms
-		Location beach = new Location("on the beach you woke up on");
-		Location wreck = new Location("in a big shipwreck on the beach, it looks old");
-		Location wreckdeck = new Location("on the topdeck of the wreck");
+		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
+		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
+		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here.");
 
 		// Initialise room exits
-		beach.AddExit("east", wreck);
+		mainent.AddExit("east", mainhall);
+		mainent.AddExit("north", mainhall);
+		mainent.AddExit("west", mainhall);
 
-		wreck.AddExit("west", beach);
-		wreck.AddExit("up", wreckdeck);
-		wreckdeck.AddExit("down", wreck);
+		mainhall.AddExit("south", mainent);
+		mainhall.AddExit("southwest", mummyworkshop);
+
+		mummyworkshop.AddExit("east", mainhall);
+
+		mainent.Chest.Put("sword", Sword);
+		mummyworkshop.Chest.Put("bandage", Bandage);
 
 
-		// Add your Items \/ Name        \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
-		wreck.Chest.Put("sword", new Item(15, "50", "weapon", "An old heavy sword rusted and cracked.")); //<-- amnt for putcmd could be more only rly for healing and stuff 
-		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
-		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
-		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
-
-
-		// Add Enemies       \/ Name         \/Armor \/ Type
-		wreckdeck.AddEnemy("cabby", new Enemy(0, "Crab"));
-		wreckdeck.AddEnemy("crabbo", new Enemy(0, "Crab"));
+		// Add Enemies 
+		mummyworkshop.AddEnemy("sislo", new Enemy(0, "Snake"));
+		mummyworkshop.AddEnemy("poingo", new Enemy(0, "Snake"));
 
 		// Start game Location
-		player.CurrentLocation = beach;
+		player.CurrentLocation = mainent;
 	}
 
 	public void Play()
 	{
-		Console.ForegroundColor = ConsoleColor.Green;
+		Console.ForegroundColor = ConsoleColor.DarkYellow;
 		PrintWelcome();
 		Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
 		Thread gameThread = new Thread(() =>
@@ -98,10 +97,10 @@ class Game
 
 	private void PrintWelcome()
 	{
-		Console.WriteLine();
-		Console.WriteLine("Wake up");
-		Console.WriteLine("Where are you");
-		Console.WriteLine("Type 'help' if you need help.");
+		Console.WriteLine("Your eyes are getting used to the dark now.");
+		Console.WriteLine("You fell into an ancient temple and are now bleeding.");
+		Console.WriteLine($"Your only objective:\nEscape");
+		Console.WriteLine("Type 'help' for a controls.");
 		Console.WriteLine();
 		Look();
 		Status();
@@ -160,10 +159,6 @@ class Game
 	// ######################################
 	private void PrintHelp()
 	{
-		Console.WriteLine("You are lost. You are alone.");
-		Console.WriteLine("You wander around on some island.");
-		Console.WriteLine();
-		// let the parser print the commands
 		parser.PrintValidCommands();
 	}
 
