@@ -153,11 +153,14 @@ class Player
                                 Console.WriteLine("You have started to bleed.");
                             }
                             enemy.Damage(DamageValue);
-                            Thread audioThread = game.audioPlayer.PlayAudioAsync("assets/audio/PlayerAttack.mp3", true);
+                            Thread AttackSound = game.audioPlayer.PlayAudioAsync("assets/audio/PlayerAttack.mp3", false);
                             Console.WriteLine($"Attacked {InteractedPart}.");
                             if (AreAllEnemiesDead())
                             {
                                 InCombat = false;
+                                game.audioPlayer.StopAllAudioThreads();
+                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+                                CurrentLocation.enemies.Clear();
                             }
                         }
                         else
@@ -165,11 +168,15 @@ class Player
                             Console.WriteLine($"{InteractedPart} is already dead.");
                             if (AreAllEnemiesDead())
                             {
+                                game.audioPlayer.StopAllAudioThreads();
+                                Thread BackMusic = game.audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+                                CurrentLocation.enemies.Clear();
                                 InCombat = false;
                             }
+
+
+
                         }
-
-
                     }
                     else
                     {

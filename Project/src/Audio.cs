@@ -19,10 +19,11 @@ public class AudioPlayer
 
     public void StopAudioThread(Thread thread)
     {
-        if (audioThreads.ContainsKey(thread))
+        if (audioThreads.TryGetValue(thread, out var waveOutEvent))
         {
-            audioThreads[thread].Stop();
-            audioThreads[thread].Dispose();
+            waveOutEvent.Stop();
+            thread.Join();
+            waveOutEvent.Dispose();
             audioThreads.Remove(thread);
         }
     }
@@ -49,35 +50,27 @@ public class AudioPlayer
     {
         try
         {
-            using (var audioFileReader = new AudioFileReader(audioFile))
-            using (var outputDevice = new WaveOutEvent())
+            while (!quitRequested)
             {
-                audioThreads[Thread.CurrentThread] = outputDevice; 
-
-                outputDevice.Init(audioFileReader);
-
-
-                outputDevice.PlaybackStopped += (sender, args) =>
+                using (var audioFileReader = new AudioFileReader(audioFile))
+                using (var outputDevice = new WaveOutEvent())
                 {
-                    if (loop && !quitRequested)
+                    audioThreads[Thread.CurrentThread] = outputDevice;
+
+                    outputDevice.Init(audioFileReader);
+
+                    outputDevice.Play();
+
+                    while (!quitRequested && (loop || outputDevice.PlaybackState == PlaybackState.Playing))
                     {
-
-                        if (audioThreads.TryGetValue(Thread.CurrentThread, out var waveOutEvent))
-                        {
-                            if (waveOutEvent != null && waveOutEvent.PlaybackState == PlaybackState.Stopped)
-                            {
-                                waveOutEvent.Play();
-                            }
-                        }
+                        Thread.Sleep(100);
                     }
-                };
+                }
 
-
-                outputDevice.Play();
-
-                while (!quitRequested && (loop || outputDevice.PlaybackState == PlaybackState.Playing))
+                // If not looping or quit requested, exit the loop
+                if (!loop || quitRequested)
                 {
-                    Thread.Sleep(100);
+                    break;
                 }
             }
         }
@@ -86,4 +79,6 @@ public class AudioPlayer
             Console.WriteLine($"Error playing audio: {ex.Message}");
         }
     }
+
+
 }

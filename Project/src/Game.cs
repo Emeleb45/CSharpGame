@@ -39,7 +39,7 @@ class Game
 
 
 		// Add your Items \/ Name        \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
-		wreck.Chest.Put("sword", new Item(15, "25", "weapon", "An old heavy sword rusted and cracked.")); //<-- amnt for putcmd could be more only rly for healing and stuff 
+		wreck.Chest.Put("sword", new Item(15, "50", "weapon", "An old heavy sword rusted and cracked.")); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
 		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
 		wreck.Chest.Put("bandage", new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp."));
@@ -56,7 +56,7 @@ class Game
 	public void Play()
 	{
 		PrintWelcome();
-		Thread audioThread = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
+		Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.mp3", true);
 		Thread gameThread = new Thread(() =>
 		{
 			bool finished = false;
@@ -74,7 +74,7 @@ class Game
 			}
 
 			quitRequested = true;
-			audioPlayer.StopAudioThread(audioThread);
+			audioPlayer.StopAllAudioThreads();
 			audioPlayer.WaitForAllAudioThreads();
 		});
 		gameThread.Start();
@@ -197,6 +197,8 @@ class Game
 		}
 		if (nextLocation.enemies != null && nextLocation.enemies.Count > 0)
 		{
+			audioPlayer.StopAllAudioThreads();
+			Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BattleMain.mp3", true);
 			player.InCombat = true;
 			Console.WriteLine($"Oh no! You have encountered enemies.");
 
@@ -205,7 +207,7 @@ class Game
 				string enemyName = enemyEntry.Key;
 				Enemy enemy = enemyEntry.Value;
 
-				Console.WriteLine($"{enemyName}, the {enemy.EniType}.");
+				Console.WriteLine($"{enemyName}, the {enemy.EniType}.");  	
 			}
 
 

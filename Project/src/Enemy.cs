@@ -46,6 +46,7 @@ class Enemy
     {
         Console.WriteLine($"{Name} died and dropped his items.");
         DropItems();
+
     }
 
     public bool IsAlive()
