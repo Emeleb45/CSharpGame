@@ -179,7 +179,7 @@ class Player
                         }
                     }
                     else
-                    {
+                    {           
                         Console.WriteLine($"Cannot attack {InteractedPart}.");
                     }
                 }
