@@ -61,10 +61,10 @@ class Enemy
         backpack = new Inventory(75);
         health = 100;
         bleeding = false;
-        if (type == "Snake")
-        {
-            backpack.Put("snakescale", new Item(5, "0", "Item", "Scale of a snake why would u want this."));
-        }
+        //if (EniType == "Snake")
+        //{
+           // backpack.Put("snakescale", new Item(5, "0", "Item", "Scale of a snake why would u want this."));
+        //}
 
 
     }

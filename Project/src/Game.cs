@@ -21,9 +21,10 @@ class Game
 
 
 
-		// Add your Items     \/Armor\/Func\/Type          \/Desc                           \/ammt always 1
+		// Add your Items     \/Weight\/Func\/Type          \/Desc                           \/ammt always 1
 		Item Sword = new Item(15, "50", "weapon", "A rusted egyptian sword."); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		Item Bandage = new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp.");
+		Item Lifekey = new Item(2, "keylife", "keyitem", "A key with the symbol of life.");
 		// Create the rooms
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
@@ -39,8 +40,10 @@ class Game
 
 		mummyworkshop.AddExit("east", mainhall);
 
+
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
+		mummyworkshop.Chest.Put("lifekey", Lifekey);
 
 
 		// Add Enemies 

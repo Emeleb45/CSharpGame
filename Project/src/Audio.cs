@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -7,44 +6,53 @@ using NAudio.Wave;
 public class AudioPlayer
 {
     private Dictionary<Thread, WaveOutEvent> audioThreads = new Dictionary<Thread, WaveOutEvent>();
-    private bool quitRequested = false;
+    private readonly object locker = new object();
 
     public Thread PlayAudioAsync(string audioFile, bool loop)
     {
         Thread audioThread = new Thread(() => PlayAudio(audioFile, loop));
-        audioThreads.Add(audioThread, new WaveOutEvent());
         audioThread.Start();
         return audioThread;
     }
 
     public void StopAudioThread(Thread thread)
     {
-        if (audioThreads.TryGetValue(thread, out var waveOutEvent))
+        lock (locker)
         {
-            waveOutEvent.Stop();
-            thread.Join();
-            waveOutEvent.Dispose();
-            audioThreads.Remove(thread);
+            if (audioThreads.TryGetValue(thread, out var waveOutEvent))
+            {
+                waveOutEvent.Stop();
+                thread.Join();
+                waveOutEvent.Dispose();
+                audioThreads.Remove(thread);
+            }
         }
     }
 
     public void StopAllAudioThreads()
     {
-        foreach (var kvp in audioThreads)
+        lock (locker)
         {
-            kvp.Value.Stop();
-            kvp.Value.Dispose();
+            foreach (var kvp in audioThreads)
+            {
+                kvp.Value.Stop();
+                kvp.Value.Dispose();
+            }
+            audioThreads.Clear();
         }
-        audioThreads.Clear();
     }
 
     public void WaitForAllAudioThreads()
     {
-        foreach (var thread in audioThreads.Keys)
+        lock (locker)
         {
-            thread.Join();
+            foreach (var thread in audioThreads.Keys)
+            {
+                thread.Join();
+            }
         }
     }
+
     private void PlayAudio(string audioFile, bool loop)
     {
         try
@@ -52,23 +60,31 @@ public class AudioPlayer
             using (var audioFileReader = new AudioFileReader(audioFile))
             using (var outputDevice = new WaveOutEvent())
             {
-                audioThreads[Thread.CurrentThread] = outputDevice;
+                lock (locker)
+                {
+                    audioThreads[Thread.CurrentThread] = outputDevice;
+                }
 
                 outputDevice.Init(audioFileReader);
                 outputDevice.Play();
 
-                // Wait for the playback to complete or until quit is requested
-                while (!quitRequested && outputDevice.PlaybackState == PlaybackState.Playing)
+                while (outputDevice.PlaybackState == PlaybackState.Playing)
                 {
                     Thread.Sleep(100);
                 }
 
-                // If looping or not quit requested, restart the audio playback
-                if (loop && !quitRequested)
+                if (loop)
                 {
-                    // Stop and dispose before restarting
                     outputDevice.Stop();
                     outputDevice.Dispose();
+                    PlayAudio(audioFile, loop);
+                }
+                else
+                {
+                    lock (locker)
+                    {
+                        audioThreads.Remove(Thread.CurrentThread);
+                    }
                 }
             }
         }
@@ -77,6 +93,4 @@ public class AudioPlayer
             Console.WriteLine($"Error playing audio: {ex.Message}");
         }
     }
-
-
 }
