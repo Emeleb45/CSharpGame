@@ -7,7 +7,7 @@ class Game
 	private Player player;
 
 	public bool quitRequested = false;
-    public AudioManager audioManager = new AudioManager();
+	public AudioManager audioManager = new AudioManager();
 	public Game()
 	{
 		parser = new Parser();
@@ -25,26 +25,28 @@ class Game
 		// Add your Items     \/Weight\/Func\/Type          \/Desc                           \/ammt always 1
 		Item Sword = new Item(15, "50", "weapon", "A rusted egyptian sword."); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		Item Bandage = new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp.");
-		Item Lifekey = new Item(2, "keylife", "keyitem", "A key with the symbol of life.");
+		Item LifeKey = new Item(2, "lifekey", "keyitem", "A key with the symbol of life.");
 		// Create the rooms
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
 		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here.");
+		Location newlocation = new Location("WOW YOU GOT THEY KEY WHAT OMG.");
 
 		// Initialise room exits
-		mainent.AddExit("east", mainhall);
 		mainent.AddExit("north", mainhall);
-		mainent.AddExit("west", mainhall);
+
 
 		mainhall.AddExit("south", mainent);
 		mainhall.AddExit("southwest", mummyworkshop);
+		mainhall.AddLockedExit("north", newlocation, LifeKey);
 
 		mummyworkshop.AddExit("east", mainhall);
 
+		newlocation.AddExit("south", mainhall);
 
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
-		mummyworkshop.Chest.Put("lifekey", Lifekey);
+		mummyworkshop.Chest.Put("lifekey", LifeKey);
 
 
 		// Add Enemies 
@@ -53,6 +55,7 @@ class Game
 
 		// Start game Location
 		player.CurrentLocation = mainent;
+		player.PreviousLocation = mainent;
 	}
 
 	public void Play()
@@ -101,6 +104,7 @@ class Game
 	{
 		Console.WriteLine("Your eyes are getting used to the dark now.");
 		Console.WriteLine("You fell into an ancient temple and are now bleeding.");
+		Console.WriteLine("Everytime you move you shall lose 5HP.");
 		Console.WriteLine($"Your only objective:\nEscape");
 		Console.WriteLine("Type 'help' for a controls.");
 		Console.WriteLine();
@@ -150,6 +154,9 @@ class Game
 			case "use":
 				UseItem(command);
 				break;
+			case "run":
+				Run();
+				break;
 
 		}
 
@@ -165,11 +172,35 @@ class Game
 	}
 
 
+	private void Run()
+	{
+		if (player.InCombat == true && player.CanRun == true)
+		{
+			Location escapingroom = player.CurrentLocation;
+			Console.ForegroundColor = ConsoleColor.DarkYellow;
+			player.InCombat = false;
+			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
+			player.CurrentLocation = player.PreviousLocation;
+			Console.WriteLine("Succesfully ran away but your enemies got healed.");
+			foreach (Enemy enemy in escapingroom.enemies.Values)
+			{
+				enemy.health = 100;
+			}
+			if (player.bleeding == true)
+			{
+				player.Damage(5);
+			}
+		}
+		else
+		{
+			Console.WriteLine("There is nowhere to run...");
+		}
+	}
 	private void GoLocation(Command command)
 	{
 		if (player.InCombat == true)
 		{
-			Console.WriteLine("You cant run.");
+			Console.WriteLine("Use command run if you want to!");
 			return;
 		}
 		if (!command.HasSecondWord())
@@ -187,6 +218,7 @@ class Game
 			Console.WriteLine("There is no exit " + direction + "!");
 			return;
 		}
+		player.PreviousLocation = player.CurrentLocation;
 		player.CurrentLocation = nextLocation;
 
 		if (player.bleeding == true)

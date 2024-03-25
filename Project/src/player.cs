@@ -3,6 +3,7 @@ class Player
     private Game game;
 
     public Location CurrentLocation { get; set; }
+    public Location PreviousLocation { get; set; }
     public int health;
     private Inventory backpack;
 
@@ -10,6 +11,7 @@ class Player
     public int Armor;
     public bool bleeding;
     public bool InCombat;
+    public bool CanRun;
 
 
     // methods
@@ -62,7 +64,9 @@ class Player
         health = 75;
         bleeding = true;
         CurrentLocation = null;
+        PreviousLocation = null;
         InCombat = false;
+        CanRun = true;
         this.game = game;
     }
     public string ShowBackpack()
@@ -134,6 +138,11 @@ class Player
         switch (item.Type)
         {
             case "weapon":
+                if (InteractedPart == "player")
+                {
+                    Console.WriteLine("Use on what?");
+                    break;
+                }
                 int DamageValue;
                 if (int.TryParse(item.Func, out DamageValue))
                 {
@@ -208,8 +217,37 @@ class Player
 
                 break;
 
-            case "unlock":
-                Console.WriteLine("Unfinishied unlock");
+            case "keyitem":
+                if (InteractedPart == "player")
+                {
+                    Console.WriteLine("Use on what?");
+                    break;
+                }
+                if (!CurrentLocation.lockedExits.ContainsKey(InteractedPart) && !CurrentLocation.exits.ContainsKey(InteractedPart))
+                {
+                    Console.WriteLine("There is nothing there!");
+                }
+                if (CurrentLocation.exits.ContainsKey(InteractedPart))
+                {
+                    Console.WriteLine("Thats already unlocked!");
+                }
+                if (CurrentLocation.lockedExits.ContainsKey(InteractedPart))
+                {
+                    (Location lockedExitLocation, Item requiredKey) = CurrentLocation.lockedExits[InteractedPart];
+                    if (requiredKey.Func == item.Func)
+                    {
+                        // Unlock the locked exit
+                        CurrentLocation.AddExit(InteractedPart, lockedExitLocation);
+                        CurrentLocation.lockedExits.Remove(InteractedPart);
+                        backpack.del(itemName);
+                        Console.WriteLine("Opened the door!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("The key does not fit this door.");
+                    }
+                }
+
                 break;
 
             default:

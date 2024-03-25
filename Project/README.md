@@ -11,4 +11,5 @@ Open this directory (with the Zuul.csproj file) in the terminal and type:
 ```
 dotnet run
 or build it big guy
+actually for me running it makes some text seem invisible it works fine if you build 
 ```

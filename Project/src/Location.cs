@@ -16,7 +16,7 @@ class Location
 
 	}
 	internal Dictionary<string, Location> exits;
-
+	internal Dictionary<string, (Location, Item)> lockedExits;
 
 	public Location(string desc)
 	{
@@ -24,7 +24,7 @@ class Location
 		description = desc;
 		exits = new Dictionary<string, Location>();
 		enemies = new Dictionary<string, Enemy>();
-
+		lockedExits = new Dictionary<string, (Location, Item)>();
 	}
 	public void AddEnemy(string enemyname, Enemy enemy)
 	{
@@ -37,6 +37,10 @@ class Location
 		exits.Add(direction, neighbor);
 	}
 
+	public void AddLockedExit(string direction, Location neighbor, Item requiredKey)
+	{
+		lockedExits.Add(direction, (neighbor, requiredKey));
+	}
 	public string GetShortDescription()
 	{
 		return description;
@@ -49,6 +53,8 @@ class Location
 		str += ".\n";
 
 		str += GetExitString();
+		str += "\n";
+		str += GetLockedExitString();
 		return str;
 	}
 
@@ -61,7 +67,14 @@ class Location
 		}
 		return null;
 	}
-
+	public (Location, Item) GetLockedExit(string direction)
+	{
+		if (lockedExits.ContainsKey(direction))
+		{
+			return lockedExits[direction];
+		}
+		return (null, null);
+	}
 
 	private string GetExitString()
 	{
@@ -80,5 +93,17 @@ class Location
 		}
 
 		return str;
+	}
+	private string GetLockedExitString()
+	{
+		string str = "Locked Exits:";
+
+		foreach (string key in lockedExits.Keys)
+		{
+			string requiredItemCode = lockedExits[key].Item2.Func; // Assuming Item has an ItemCode property
+			str += $" {key} (Requires {requiredItemCode})";
+		}
+
+		return str + "\n";
 	}
 }
