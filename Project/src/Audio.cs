@@ -2,95 +2,53 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using NAudio.Wave;
-
-public class AudioPlayer
+public class AudioManager
 {
-    private Dictionary<Thread, WaveOutEvent> audioThreads = new Dictionary<Thread, WaveOutEvent>();
-    private readonly object locker = new object();
+    private LoopStream backgroundMusic;
+    private List<WaveOut> effectPlayers;
 
-    public Thread PlayAudioAsync(string audioFile, bool loop)
+
+    public AudioManager()
     {
-        Thread audioThread = new Thread(() => PlayAudio(audioFile, loop));
-        audioThread.Start();
-        return audioThread;
+        effectPlayers = new List<WaveOut>();
     }
 
-    public void StopAudioThread(Thread thread)
+    public void PlayBackgroundMusic(string audioFile)
     {
-        lock (locker)
+        if (backgroundMusic != null)
         {
-            if (audioThreads.TryGetValue(thread, out var waveOutEvent))
-            {
-                waveOutEvent.Stop();
-                thread.Join();
-                waveOutEvent.Dispose();
-                audioThreads.Remove(thread);
-            }
+            backgroundMusic.Stop();
         }
+
+        backgroundMusic = new LoopStream(new WaveFileReader(audioFile));
+
+        backgroundMusic.playsound(audioFile, true);
     }
 
-    public void StopAllAudioThreads()
+    public void StopBackgroundMusic()
     {
-        lock (locker)
+        if (backgroundMusic != null)
         {
-            foreach (var kvp in audioThreads)
-            {
-                kvp.Value.Stop();
-                kvp.Value.Dispose();
-            }
-            audioThreads.Clear();
+            //backgroundMusic.Stop();
         }
     }
-
-    public void WaitForAllAudioThreads()
+    public void PlayEffect(string audioFile)
     {
-        lock (locker)
-        {
-            foreach (var thread in audioThreads.Keys)
-            {
-                thread.Join();
-            }
-        }
+        WaveOut waveOut = new WaveOut();
+        WaveFileReader reader = new WaveFileReader(audioFile);
+        waveOut.Init(reader);
+        waveOut.Play();
+        effectPlayers.Add(waveOut);
     }
 
-    private void PlayAudio(string audioFile, bool loop)
+    // Add method to stop effects if needed
+    public void StopEffects()
     {
-        try
+        foreach (var player in effectPlayers)
         {
-            using (var audioFileReader = new AudioFileReader(audioFile))
-            using (var outputDevice = new WaveOutEvent())
-            {
-                lock (locker)
-                {
-                    audioThreads[Thread.CurrentThread] = outputDevice;
-                }
-
-                outputDevice.Init(audioFileReader);
-                outputDevice.Play();
-
-                while (outputDevice.PlaybackState == PlaybackState.Playing)
-                {
-                    Thread.Sleep(100);
-                }
-
-                if (loop)
-                {
-                    outputDevice.Stop();
-                    outputDevice.Dispose();
-                    PlayAudio(audioFile, loop);
-                }
-                else
-                {
-                    lock (locker)
-                    {
-                        audioThreads.Remove(Thread.CurrentThread);
-                    }
-                }
-            }
+            player.Stop();
+            player.Dispose();
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error playing audio: {ex.Message}");
-        }
+        effectPlayers.Clear();
     }
 }

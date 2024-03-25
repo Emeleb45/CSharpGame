@@ -1,12 +1,13 @@
 using System;
+using NAudio.Wave;
 
 class Game
 {
-	public AudioPlayer audioPlayer = new AudioPlayer();
 	private Parser parser;
 	private Player player;
-	public bool quitRequested = false;
 
+	public bool quitRequested = false;
+    public AudioManager audioManager = new AudioManager();
 	public Game()
 	{
 		parser = new Parser();
@@ -58,7 +59,7 @@ class Game
 	{
 		Console.ForegroundColor = ConsoleColor.DarkYellow;
 		PrintWelcome();
-		Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BackMusic.wav", true);
+		audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 		Thread gameThread = new Thread(() =>
 		{
 			bool finished = false;
@@ -76,8 +77,6 @@ class Game
 			}
 
 			quitRequested = true;
-			audioPlayer.StopAllAudioThreads();
-			audioPlayer.WaitForAllAudioThreads();
 		});
 		gameThread.Start();
 		gameThread.Join();
@@ -196,8 +195,7 @@ class Game
 		}
 		if (nextLocation.enemies != null && nextLocation.enemies.Count > 0)
 		{
-			audioPlayer.StopAllAudioThreads();
-			Thread BackMusic = audioPlayer.PlayAudioAsync("assets/audio/BattleMain.wav", true);
+			audioManager.PlayBackgroundMusic("assets/audio/BattleMain.wav");
 			player.InCombat = true;
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine($"Oh no! You have encountered enemies.");
