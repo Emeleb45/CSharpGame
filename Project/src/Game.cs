@@ -26,6 +26,10 @@ class Game
 		Item Sword = new Item(15, "50", "weapon", "A rusted egyptian sword."); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		Item Bandage = new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp.");
 		Item LifeKey = new Item(2, "lifekey", "keyitem", "A key with the symbol of life.");
+		Item GoldHelmet = new Item(8, "8", "headgear", "HATGEAR");
+		Item GoldChestplate = new Item(8, "8", "chestgear", "CHESTGEAR");
+		Item GoldLeggings = new Item(8, "8", "leggear", "LEGGEAR");
+		Item GoldBoots = new Item(8, "8", "footgear", "FootGEAR");
 		// Create the rooms
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
@@ -47,12 +51,18 @@ class Game
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
 		mummyworkshop.Chest.Put("lifekey", LifeKey);
+		mummyworkshop.Chest.Put("goldhelmet", GoldHelmet);
+		mummyworkshop.Chest.Put("goldchestplate", GoldChestplate);
+		mummyworkshop.Chest.Put("goldpants", GoldLeggings);
+		mummyworkshop.Chest.Put("goldboots", GoldBoots);
 
 
 		// Add Enemies 
 		mummyworkshop.AddEnemy("sislo", new Enemy(0, "Snake"));
 		mummyworkshop.AddEnemy("poingo", new Enemy(0, "Snake"));
 
+		newlocation.AddEnemy("gonga", new Enemy(2, "Snake"));
+		newlocation.AddEnemy("donga", new Enemy(2, "Snake"));
 		// Start game Location
 		player.CurrentLocation = mainent;
 		player.PreviousLocation = mainent;
@@ -299,6 +309,7 @@ class Game
 			Console.WriteLine("Not bleeding.");
 		}
 		Console.WriteLine("Health: " + player.health);
+		Console.WriteLine("Armor: " + player.Armor);
 
 
 

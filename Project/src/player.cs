@@ -15,7 +15,7 @@ class Player
 
 
     // methods
-    public int Hit(int amount)
+    public void Hit(int amount)
     {
         int damage = amount;
         if (Armor > 0)
@@ -26,15 +26,13 @@ class Player
             {
                 damage = 2;
             }
-            return damage;
         }
+        health -= damage;
 
-
-        return damage;
     }
     public void Damage(int amount)
     {
-        health -= Hit(amount);
+        health -= amount;
         if (health < 0)
         {
             health = 0;
@@ -69,6 +67,30 @@ class Player
         CanRun = true;
         this.game = game;
     }
+    public void UpdateArmor()
+    {
+        int totalArmor = 0;
+
+        foreach (var item in backpack.items.Values)
+        {
+
+            if (item.Type == "headgear" || item.Type == "chestgear" || item.Type == "leggear" || item.Type == "footgear")
+            {
+                if (int.TryParse(item.Func, out int funcValue))
+                {
+                    totalArmor += funcValue;
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid func value for item {item.Type}: {item.Func}");
+                }
+            }
+        }
+
+
+        Armor = totalArmor;
+    }
+
     public string ShowBackpack()
     {
         int FreeWeight = backpack.FreeWeight();
@@ -94,19 +116,34 @@ class Player
     public bool TakeFromChest(string itemName)
     {
         if (CurrentLocation != null)
-
         {
             Item item = CurrentLocation.Chest.Get(itemName);
             if (item != null)
             {
-
-                backpack.Put(itemName, item);
-                CurrentLocation.Chest.del(itemName);
-                Console.WriteLine(itemName + " added to inventory");
+                if (item.Type == "headgear" || item.Type == "chestgear" || item.Type == "leggear" || item.Type == "footgear")
+                {
+                    if (backpack.items.Values.Any(backpackItem => backpackItem.Type == item.Type))
+                    {
+                        Console.WriteLine("You already have that type of armor.");
+                    }
+                    else
+                    {
+                        backpack.Put(itemName, item);
+                        CurrentLocation.Chest.del(itemName);
+                        UpdateArmor();
+                        game.audioManager.PlayEffect("assets/audio/TakeItem.wav");
+                        Console.WriteLine(itemName + " added to inventory");
+                    }
+                }
+                else
+                {
+                    backpack.Put(itemName, item);
+                    CurrentLocation.Chest.del(itemName);
+                    game.audioManager.PlayEffect("assets/audio/TakeItem.wav");
+                    Console.WriteLine(itemName + " added to inventory");
+                }
             }
-
         }
-
         return false;
     }
     public bool DropToChest(string itemName)
@@ -121,6 +158,8 @@ class Player
                 backpack.Get(itemName);
                 backpack.del(itemName);
                 Console.WriteLine("Dropped " + itemName);
+                game.audioManager.PlayEffect("assets/audio/DropItem.wav");
+                UpdateArmor();
             }
 
         }
@@ -240,6 +279,7 @@ class Player
                         CurrentLocation.AddExit(InteractedPart, lockedExitLocation);
                         CurrentLocation.lockedExits.Remove(InteractedPart);
                         backpack.del(itemName);
+                        game.audioManager.PlayEffect("assets/audio/UseKey.wav");
                         Console.WriteLine("Opened the door!");
                     }
                     else
@@ -265,12 +305,11 @@ class Player
         {
             if (enemy.IsAlive())
             {
-                // At least one enemy is alive, return false
                 return false;
             }
         }
 
-        // All enemies are dead
+
         return true;
     }
     public void EnemiesAttack()
@@ -279,7 +318,7 @@ class Player
         {
             if (enemy.IsAlive())
             {
-                Damage(enemy.attack());
+                Hit(enemy.attack());
 
 
             }
