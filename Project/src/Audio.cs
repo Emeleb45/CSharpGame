@@ -29,7 +29,7 @@ public class AudioManager
     {
         if (backgroundMusic != null)
         {
-            //backgroundMusic.Stop();
+            backgroundMusic.Stop();
         }
     }
     public void PlayEffect(string audioFile)
@@ -41,7 +41,7 @@ public class AudioManager
         effectPlayers.Add(waveOut);
     }
 
-    // Add method to stop effects if needed
+
     public void StopEffects()
     {
         foreach (var player in effectPlayers)

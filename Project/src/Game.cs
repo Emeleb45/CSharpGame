@@ -31,6 +31,10 @@ class Game
 		Item GoldChestplate = new Item(8, "8", "chestgear", "CHESTGEAR");
 		Item GoldLeggings = new Item(8, "8", "leggear", "LEGGEAR");
 		Item GoldBoots = new Item(8, "8", "footgear", "FootGEAR");
+		Item DiamondHelmet = new Item(8, "16", "headgear", "HATGEAR Diamond");
+		Item DiamondChestplate = new Item(8, "16", "chestgear", "CHESTGEAR  Diamond");
+		Item DiamondLeggings = new Item(8, "16", "leggear", "LEGGEAR  Diamond");
+		Item DiamondBoots = new Item(8, "16", "footgear", "FootGEAR DIAMOND");
 		// Create the rooms
 		Location END = new Location("END"); // no one will read that ever
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
@@ -59,6 +63,11 @@ class Game
 		mummyworkshop.Chest.Put("goldchestplate", GoldChestplate);
 		mummyworkshop.Chest.Put("goldpants", GoldLeggings);
 		mummyworkshop.Chest.Put("goldboots", GoldBoots);
+
+		newlocation.Chest.Put("diamondhelmet", DiamondHelmet);
+		newlocation.Chest.Put("diamondchestplate", DiamondChestplate);
+		newlocation.Chest.Put("diamondpants", DiamondLeggings);
+		newlocation.Chest.Put("diamondboots", DiamondBoots);
 
 
 		// Add Enemies 

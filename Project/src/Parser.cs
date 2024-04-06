@@ -5,7 +5,7 @@ class Parser
 
 	private readonly CommandLibrary commandLibrary;
 
-	// Constructor
+
 	public Parser()
 	{
 		commandLibrary = new CommandLibrary();

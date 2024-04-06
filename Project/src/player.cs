@@ -14,7 +14,7 @@ class Player
     public bool CanRun;
 
 
-    // methods
+
     public void Hit(int amount)
     {
         int damage = amount;
@@ -194,9 +194,10 @@ class Player
                             Random random = new Random();
                             double randomValue = random.NextDouble();
                             EnemiesAttack();
-                            if (randomValue <= 0.15) // <-- 15% change
+                            if (randomValue <= 0.15 && bleeding == false)  // <-- 15% change
                             {
                                 bleeding = true;
+
 
                                 Console.WriteLine("You have started to bleed.");
                             }
@@ -275,7 +276,7 @@ class Player
                     (Location lockedExitLocation, Item requiredKey) = CurrentLocation.lockedExits[InteractedPart];
                     if (requiredKey.Func == item.Func)
                     {
-                        // Unlock the locked exit
+
                         CurrentLocation.AddExit(InteractedPart, lockedExitLocation);
                         CurrentLocation.lockedExits.Remove(InteractedPart);
                         backpack.del(itemName);

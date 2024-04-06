@@ -3,19 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using NAudio.Wave;
 
-/// <summary>
-/// Stream for looping playback
-/// </summary>
+
 public class LoopStream : WaveStream
 {
     WaveStream sourceStream;
 
-    /// <summary>
-    /// Creates a new Loop stream
-    /// </summary>
-    /// <param name="sourceStream">The stream to read from. Note: the Read method of this stream should return 0 when it reaches the end
-    /// or else we will not loop to the start again.</param>
-    ///
+
+
     private WaveOut waveOut;
     public LoopStream(WaveStream sourceStream)
     {
@@ -53,30 +47,22 @@ public class LoopStream : WaveStream
         }
     }
 
-    /// <summary>
-    /// Use this to turn looping on or off
-    /// </summary>
+
     public bool EnableLooping { get; set; }
 
-    /// <summary>
-    /// Return source stream's wave format
-    /// </summary>
+
     public override WaveFormat WaveFormat
     {
         get { return sourceStream.WaveFormat; }
     }
 
-    /// <summary>
-    /// LoopStream simply returns
-    /// </summary>
+
     public override long Length
     {
         get { return sourceStream.Length; }
     }
 
-    /// <summary>
-    /// LoopStream simply passes on positioning to source stream
-    /// </summary>
+
     public override long Position
     {
         get { return sourceStream.Position; }
@@ -94,10 +80,10 @@ public class LoopStream : WaveStream
             {
                 if (sourceStream.Position == 0 || !EnableLooping)
                 {
-                    // something wrong with the source stream
+
                     break;
                 }
-                // loop
+
                 sourceStream.Position = 0;
             }
             totalBytesRead += bytesRead;
