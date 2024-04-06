@@ -6,6 +6,7 @@ class Game
 	private Parser parser;
 	private Player player;
 
+	public bool commandsenabled;
 	public bool quitRequested = false;
 	public AudioManager audioManager = new AudioManager();
 	public Game()
@@ -31,6 +32,7 @@ class Game
 		Item GoldLeggings = new Item(8, "8", "leggear", "LEGGEAR");
 		Item GoldBoots = new Item(8, "8", "footgear", "FootGEAR");
 		// Create the rooms
+		Location END = new Location("END"); // no one will read that ever
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
 		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here.");
@@ -47,6 +49,8 @@ class Game
 		mummyworkshop.AddExit("east", mainhall);
 
 		newlocation.AddExit("south", mainhall);
+		newlocation.AddExit("north", END);
+
 
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
@@ -75,13 +79,17 @@ class Game
 		audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 		Thread gameThread = new Thread(() =>
 		{
+			commandsenabled = true;
 			bool finished = false;
 			while (!finished)
 			{
 				if (player.health > 0)
 				{
-					Command command = parser.GetCommand();
-					finished = ProcessCommand(command);
+					if (commandsenabled)
+					{
+						Command command = parser.GetCommand();
+						finished = ProcessCommand(command);
+					}
 				}
 				else
 				{
@@ -235,6 +243,13 @@ class Game
 		{
 			player.Damage(5);
 		}
+		if (nextLocation.GetShortDescription() == "END")
+		{
+			Console.Clear();
+			Console.WriteLine("END");
+			EndGame();
+
+		}
 		if (nextLocation.enemies != null && nextLocation.enemies.Count > 0)
 		{
 			audioManager.PlayBackgroundMusic("assets/audio/BattleMain.wav");
@@ -253,8 +268,11 @@ class Game
 
 			return;
 		}
+		if (nextLocation.GetShortDescription() != "END")
+		{
+			Look();
+		}
 
-		Look();
 	}
 	private void Look()
 	{
@@ -371,5 +389,15 @@ class Game
 		}
 
 		player.UseItem(UsingItem, InteractedPart);
+	}
+	public void EndGame()
+	{
+		commandsenabled = false;
+		Console.Clear();
+		audioManager.PlayBackgroundMusic("assets/audio/BattleMain.wav");
+		Console.WriteLine("This is the end goodbye.");
+		Console.WriteLine("Press [Enter] to quit.");
+		Console.ReadLine();
+		Environment.Exit(0);
 	}
 }

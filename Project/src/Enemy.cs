@@ -44,7 +44,7 @@ class Enemy
     }
     public void Die()
     {
-        Console.WriteLine($"{Name} died and dropped his items.");
+        Console.WriteLine($"{Name} died.");
         DropItems();
 
     }

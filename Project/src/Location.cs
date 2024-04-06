@@ -100,7 +100,7 @@ class Location
 
 		foreach (string key in lockedExits.Keys)
 		{
-			string requiredItemCode = lockedExits[key].Item2.Func; // Assuming Item has an ItemCode property
+			string requiredItemCode = lockedExits[key].Item2.Func; 
 			str += $" {key} (Requires {requiredItemCode})";
 		}
 

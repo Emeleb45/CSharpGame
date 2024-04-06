@@ -194,7 +194,7 @@ class Player
                             Random random = new Random();
                             double randomValue = random.NextDouble();
                             EnemiesAttack();
-                            if (randomValue <= 0.05)
+                            if (randomValue <= 0.15) // <-- 15% change
                             {
                                 bleeding = true;
 
