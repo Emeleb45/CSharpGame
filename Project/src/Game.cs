@@ -27,14 +27,9 @@ class Game
 		Item Sword = new Item(15, "50", "weapon", "A rusted egyptian sword."); //<-- amnt for putcmd could be more only rly for healing and stuff 
 		Item Bandage = new Item(5, "20", "healingitem", "Stops bleeding and heals you by 20hp.");
 		Item LifeKey = new Item(2, "lifekey", "keyitem", "A key with the symbol of life.");
-		Item GoldHelmet = new Item(8, "8", "headgear", "HATGEAR");
-		Item GoldChestplate = new Item(8, "8", "chestgear", "CHESTGEAR");
-		Item GoldLeggings = new Item(8, "8", "leggear", "LEGGEAR");
-		Item GoldBoots = new Item(8, "8", "footgear", "FootGEAR");
-		Item DiamondHelmet = new Item(8, "16", "headgear", "HATGEAR Diamond");
-		Item DiamondChestplate = new Item(8, "16", "chestgear", "CHESTGEAR  Diamond");
-		Item DiamondLeggings = new Item(8, "16", "leggear", "LEGGEAR  Diamond");
-		Item DiamondBoots = new Item(8, "16", "footgear", "FootGEAR DIAMOND");
+		Item GoldArmor = new Item(8, "8", "armor", "gives 8 armor");
+		Item DiamondArmor = new Item(8, "16", "armor", "gives 16 armor");
+
 		// Create the rooms
 		Location END = new Location("END"); // no one will read that ever
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
@@ -55,19 +50,12 @@ class Game
 		newlocation.AddExit("south", mainhall);
 		newlocation.AddExit("north", END);
 
-
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
 		mummyworkshop.Chest.Put("lifekey", LifeKey);
-		mummyworkshop.Chest.Put("goldhelmet", GoldHelmet);
-		mummyworkshop.Chest.Put("goldchestplate", GoldChestplate);
-		mummyworkshop.Chest.Put("goldpants", GoldLeggings);
-		mummyworkshop.Chest.Put("goldboots", GoldBoots);
+		mummyworkshop.Chest.Put("goldarmor", GoldArmor);
 
-		newlocation.Chest.Put("diamondhelmet", DiamondHelmet);
-		newlocation.Chest.Put("diamondchestplate", DiamondChestplate);
-		newlocation.Chest.Put("diamondpants", DiamondLeggings);
-		newlocation.Chest.Put("diamondboots", DiamondBoots);
+		newlocation.Chest.Put("diamondarmor", DiamondArmor);
 
 
 		// Add Enemies 

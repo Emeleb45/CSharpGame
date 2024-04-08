@@ -74,7 +74,7 @@ class Player
         foreach (var item in backpack.items.Values)
         {
 
-            if (item.Type == "headgear" || item.Type == "chestgear" || item.Type == "leggear" || item.Type == "footgear")
+            if (item.Type == "armor")
             {
                 if (int.TryParse(item.Func, out int funcValue))
                 {
@@ -120,27 +120,33 @@ class Player
             Item item = CurrentLocation.Chest.Get(itemName);
             if (item != null)
             {
-                if (item.Type == "headgear" || item.Type == "chestgear" || item.Type == "leggear" || item.Type == "footgear")
+                if (item.Type == "armor")
                 {
                     if (backpack.items.Values.Any(backpackItem => backpackItem.Type == item.Type))
                     {
-                        Console.WriteLine("You already have that type of armor.");
+                        Console.WriteLine("You already have armor.");
                     }
                     else
                     {
-                        backpack.Put(itemName, item);
+                        if (backpack.Put(itemName, item))
+                        {
+                            CurrentLocation.Chest.del(itemName);
+                            UpdateArmor();
+                            game.audioManager.PlayEffect("assets/audio/TakeItem.wav");
+                            Console.WriteLine(itemName + " added to inventory");
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (backpack.Put(itemName, item))
+                    {
                         CurrentLocation.Chest.del(itemName);
                         UpdateArmor();
                         game.audioManager.PlayEffect("assets/audio/TakeItem.wav");
                         Console.WriteLine(itemName + " added to inventory");
                     }
-                }
-                else
-                {
-                    backpack.Put(itemName, item);
-                    CurrentLocation.Chest.del(itemName);
-                    game.audioManager.PlayEffect("assets/audio/TakeItem.wav");
-                    Console.WriteLine(itemName + " added to inventory");
                 }
             }
         }
