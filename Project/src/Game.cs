@@ -33,7 +33,7 @@ class Game
 		// Create the rooms
 		Location END = new Location("END"); // no one will read that ever
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
-		Location mainhall = new Location("in the main hallway that can lead you to most places, its so dark you cant see the end.");
+		Location mainhall = new Location("in the main hallway that can lead you to most places, \nits so dark you cant see the end.");
 		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here.");
 		Location newlocation = new Location("WOW YOU GOT THEY KEY WHAT OMG.");
 
