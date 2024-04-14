@@ -9,6 +9,7 @@ class Game
 	public bool commandsenabled;
 	public bool quitRequested = false;
 	public AudioManager audioManager = new AudioManager();
+	public Location stash;
 	public Game()
 	{
 		parser = new Parser();
@@ -29,13 +30,15 @@ class Game
 		Item LifeKey = new Item(2, "lifekey", "keyitem", "A key with the symbol of life.");
 		Item GoldArmor = new Item(8, "8", "armor", "gives 8 armor");
 		Item DiamondArmor = new Item(8, "16", "armor", "gives 16 armor");
+		Item Pot = new Item(5, "50", "art", "An ancient decorated pot worth $50 (might contain organs)");
 
 		// Create the rooms
 		Location END = new Location("END"); // no one will read that ever
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, \nits so dark you cant see the end");
 		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here");
-		Location newlocation = new Location("in a room with a large door from which a bright light emits");
+		Location endroom = new Location("in a room with a large door from which a bright light emits");
+		stash = new Location("in your stash a room only you can find, good for storing artifacts you cant take with you");
 
 		// Initialise room exits
 		mainent.AddExit("north", mainhall);
@@ -43,27 +46,33 @@ class Game
 
 		mainhall.AddExit("south", mainent);
 		mainhall.AddExit("southwest", mummyworkshop);
-		mainhall.AddLockedExit("north", newlocation, LifeKey);
+		mainhall.AddExit("southeast", stash);
+		mainhall.AddLockedExit("north", endroom, LifeKey);
 
 		mummyworkshop.AddExit("east", mainhall);
 
-		newlocation.AddExit("south", mainhall);
-		newlocation.AddExit("north", END);
+		stash.AddExit("west", mainhall);
+
+		endroom.AddExit("south", mainhall);
+		endroom.AddExit("north", END);
 
 		mainent.Chest.Put("sword", Sword);
 		mummyworkshop.Chest.Put("bandage", Bandage);
 		mummyworkshop.Chest.Put("lifekey", LifeKey);
 		mummyworkshop.Chest.Put("goldarmor", GoldArmor);
 
-		newlocation.Chest.Put("diamondarmor", DiamondArmor);
+		endroom.Chest.Put("diamondarmor", DiamondArmor);
+		endroom.Chest.Put("pot", Pot);
+		endroom.Chest.Put("bandage", Bandage);
 
 
 		// Add Enemies 
 		mummyworkshop.AddEnemy("sislo", new Enemy(0, "Snake"));
 		mummyworkshop.AddEnemy("poingo", new Enemy(0, "Snake"));
 
-		newlocation.AddEnemy("gonga", new Enemy(2, "Snake"));
-		newlocation.AddEnemy("donga", new Enemy(2, "Snake"));
+		endroom.AddEnemy("gonga", new Enemy(2, "Snake"));
+		endroom.AddEnemy("donga", new Enemy(2, "Snake"));
+
 		// Start game Location
 		player.CurrentLocation = mainent;
 		player.PreviousLocation = mainent;
@@ -240,7 +249,6 @@ class Game
 		if (nextLocation.GetShortDescription() == "END")
 		{
 			Console.Clear();
-			Console.WriteLine("END");
 			EndGame();
 
 		}
@@ -383,10 +391,33 @@ class Game
 	public void EndGame()
 	{
 		commandsenabled = false;
+		audioManager.StopBackgroundMusic();
+		Console.ForegroundColor = ConsoleColor.Red;
+		int plrworth = player.CalculateArtifactWorth();
+		int stashworth = stash.CalculateArtifactWorth();
+		Console.WriteLine("This is the exit, are you sure you are ready to leave.");
+		Console.WriteLine("Y/N");
+		string choice = Console.ReadLine().ToUpper();
+		if (choice == "N")
+		{
+			Console.Clear();
+			player.CurrentLocation = player.PreviousLocation;
+			Console.ForegroundColor = ConsoleColor.DarkYellow;
+			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
+			commandsenabled = true;
+			Look();
+			return;  // Exit the EndGame method without proceeding to the end game sequence
+		}
 		Console.Clear();
+		Console.ForegroundColor = ConsoleColor.DarkYellow;
 		audioManager.PlayBackgroundMusic("assets/audio/BattleMain.wav");
 		Console.WriteLine("You escaped the temple.");
 		Console.WriteLine("Now you must escape egypt with the artifacts you found.");
+		Console.WriteLine("Press [Enter] to continue.");
+		Console.ReadLine();
+		Console.Clear();
+		Console.WriteLine($"Total artifact worth in the players Inventory: ${plrworth}");
+		Console.WriteLine($"Total artifact worth in your Stash's Inventory: ${stashworth}");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
 		Console.Clear();

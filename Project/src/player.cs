@@ -296,6 +296,9 @@ class Player
                 }
 
                 break;
+            case "art":
+                Console.WriteLine("Its an artifact please do not damage it.");
+                break;
 
             default:
                 Console.WriteLine("Invalid action type.");
@@ -330,5 +333,9 @@ class Player
 
             }
         }
+    }
+    public int CalculateArtifactWorth()
+    {
+        return backpack.CalculateTotalArtifactWorth();
     }
 }

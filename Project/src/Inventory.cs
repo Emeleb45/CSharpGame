@@ -106,5 +106,26 @@ class Inventory
             return null;
         }
     }
+    public int CalculateTotalArtifactWorth()
+    {
+        int totalWorth = 0;
+
+        foreach (var item in items.Values)
+        {
+            if (item.Type == "art")
+            {
+                if (int.TryParse(item.Func, out int worth))
+                {
+                    totalWorth += worth;
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid worth value for artifact {item}.");
+                }
+            }
+        }
+
+        return totalWorth;
+    }
 
 }

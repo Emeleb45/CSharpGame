@@ -100,10 +100,14 @@ class Location
 
 		foreach (string key in lockedExits.Keys)
 		{
-			string requiredItemCode = lockedExits[key].Item2.Func; 
+			string requiredItemCode = lockedExits[key].Item2.Func;
 			str += $" {key} (Requires {requiredItemCode})";
 		}
 
 		return str + "\n";
+	}
+	public int CalculateArtifactWorth()
+	{
+		return chest.CalculateTotalArtifactWorth();
 	}
 }
