@@ -56,7 +56,7 @@ class Player
 
     public Player(Game game)
     {
-        Name = "Blank";
+        Name = "Blank"; // this never gets used 
         Armor = 0;
         backpack = new Inventory(75);
         health = 75;
@@ -205,7 +205,7 @@ class Player
                                 bleeding = true;
 
 
-                                Console.WriteLine("You have started to bleed.");
+                                Console.WriteLine("You have started bleeding.");
                             }
                             enemy.Damage(DamageValue);
                             game.audioManager.PlayEffect("assets/audio/PlayerAttack.wav");

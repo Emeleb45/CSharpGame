@@ -102,7 +102,7 @@ class Inventory
         }
         else
         {
-            Console.WriteLine("There is no " + itemName + "dumass");
+            Console.WriteLine("There is no " + itemName + ".");
             return null;
         }
     }

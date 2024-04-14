@@ -32,10 +32,10 @@ class Game
 
 		// Create the rooms
 		Location END = new Location("END"); // no one will read that ever
-		Location mainent = new Location("in the main entrance you can still see the hole you fell trough.");
-		Location mainhall = new Location("in the main hallway that can lead you to most places, \nits so dark you cant see the end.");
-		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here.");
-		Location newlocation = new Location("WOW YOU GOT THEY KEY WHAT OMG.");
+		Location mainent = new Location("in the main entrance you can still see the hole you fell trough");
+		Location mainhall = new Location("in the main hallway that can lead you to most places, \nits so dark you cant see the end");
+		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here");
+		Location newlocation = new Location("in a room with a large door from which a bright light emits");
 
 		// Initialise room exits
 		mainent.AddExit("north", mainhall);
@@ -163,9 +163,6 @@ class Game
 			case "quit":
 				wantToQuit = true;
 				break;
-			case "die":
-				KillPlayer();
-				break;
 			case "use":
 				UseItem(command);
 				break;
@@ -196,7 +193,7 @@ class Game
 			player.InCombat = false;
 			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 			player.CurrentLocation = player.PreviousLocation;
-			Console.WriteLine("Succesfully ran away but your enemies got healed.");
+			Console.WriteLine("Succesfully ran away.");
 			foreach (Enemy enemy in escapingroom.enemies.Values)
 			{
 				enemy.health = 100;
@@ -362,10 +359,6 @@ class Game
 		string TakingItem = command.SecondWord;
 		player.DropToChest(TakingItem);
 	}
-	public void KillPlayer()
-	{
-		player.health = 0;
-	}
 	public void UseItem(Command command)
 	{
 
@@ -392,7 +385,13 @@ class Game
 		commandsenabled = false;
 		Console.Clear();
 		audioManager.PlayBackgroundMusic("assets/audio/BattleMain.wav");
-		Console.WriteLine("This is the end goodbye.");
+		Console.WriteLine("You escaped the temple.");
+		Console.WriteLine("Now you must escape egypt with the artifacts you found.");
+		Console.WriteLine("Press [Enter] to continue.");
+		Console.ReadLine();
+		Console.Clear();
+		Console.ForegroundColor = ConsoleColor.Red;
+		Console.WriteLine("To be continued.");
 		Console.WriteLine("Press [Enter] to quit.");
 		Console.ReadLine();
 		Environment.Exit(0);
