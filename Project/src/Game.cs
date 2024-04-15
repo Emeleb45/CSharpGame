@@ -32,8 +32,9 @@ class Game
 		Item DiamondArmor = new Item(8, "16", "armor", "gives 16 armor");
 		Item Pot = new Item(5, "50", "art", "An ancient decorated pot worth $50 (might contain organs)");
 
-		// Create the rooms
+
 		Location END = new Location("END"); // no one will read that ever
+		// Create the rooms
 		Location mainent = new Location("in the main entrance you can still see the hole you fell trough");
 		Location mainhall = new Location("in the main hallway that can lead you to most places, \nits so dark you cant see the end");
 		Location mummyworkshop = new Location("in a wide room full of mummies it seems they are made here");
@@ -203,6 +204,7 @@ class Game
 			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 			player.CurrentLocation = player.PreviousLocation;
 			Console.WriteLine("Succesfully ran away.");
+			Look();
 			foreach (Enemy enemy in escapingroom.enemies.Values)
 			{
 				enemy.health = 100;
