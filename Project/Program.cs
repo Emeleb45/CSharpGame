@@ -6,7 +6,7 @@ class Program
 {
 	static void Main()
 	{
-		Console.Title = "ZuulGame";
+		Console.Title = "Temple Escape";
 		Game game = new Game();
 		game.Play();
 	}

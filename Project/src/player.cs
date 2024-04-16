@@ -259,6 +259,7 @@ class Player
                         bleeding = false;
                         backpack.del(itemName);
                         Console.WriteLine($"Healed {HealValue}Hp.");
+                        game.audioManager.PlayEffect("assets/audio/Heal.wav");
                     }
 
                 break;

@@ -72,10 +72,10 @@ class Inventory
     {
         if (items.ContainsKey(itemName))
         {
-            Item itemthing = items[itemName];
+            Item item = items[itemName];
 
 
-            return itemthing;
+            return item;
         }
         else
         {

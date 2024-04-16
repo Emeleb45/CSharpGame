@@ -26,3 +26,5 @@ attack = 4
 bleed = 5
 
 also the newlocation enemies have 2 armor making them take 48 damage instead of 50
+
+please remove any .sln stuff from visual studio (the purple one) its very annoying and gets in the way of dotnet run/build

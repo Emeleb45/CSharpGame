@@ -204,6 +204,7 @@ class Game
 			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 			player.CurrentLocation = player.PreviousLocation;
 			Console.WriteLine("Succesfully ran away.");
+            audioManager.PlayEffect("assets/audio/Run.wav");
 			Look();
 			foreach (Enemy enemy in escapingroom.enemies.Values)
 			{
@@ -274,6 +275,7 @@ class Game
 		}
 		if (nextLocation.GetShortDescription() != "END")
 		{
+			audioManager.PlayEffect("assets/audio/Walk.wav");
 			Look();
 		}
 
@@ -408,7 +410,7 @@ class Game
 			audioManager.PlayBackgroundMusic("assets/audio/BackMusic.wav");
 			commandsenabled = true;
 			Look();
-			return;  // Exit the EndGame method without proceeding to the end game sequence
+			return;  
 		}
 		Console.Clear();
 		Console.ForegroundColor = ConsoleColor.DarkYellow;
