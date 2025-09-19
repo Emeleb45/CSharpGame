@@ -1,6 +1,6 @@
 # CSharpGame
  C#Game
 
-Project is the assesment
-
-CoolVersion is the cool version.
+Requires .net 8.0 to be run or build
+Simple text advanture game played in a command window
+Includes original soundtrack made in fami studio
